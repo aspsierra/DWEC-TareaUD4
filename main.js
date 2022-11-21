@@ -3,6 +3,11 @@ class Factura{
         this.id=id
         this.fecha = fecha;
         this.precio = 0;
+        this.iva = 0
+        this.descuento = 0;
+        this.precioBase=0;
+        this.precioIva=0;
+        this.precioTotal=0;
     }
 
     /**
@@ -16,20 +21,21 @@ class Factura{
      * Calculo del descuento
      * @param {number} descuento 
      */
-    asignarDescuento(descuento){
-        this.descuento = descuento;       
+    asignarDescuento(){              
         this.precioDescuento = this.descuento/100 * this.precio;
+        this.precioDescuento=parseFloat(this.precioDescuento.toFixed(2));
         this.precioBase = this.precio - this.precioDescuento;
     }
     /**
      * Porcentaje de iva 
      * @param {number} iva 
      */
-    calcularIva(iva){
-        this.iva = iva;
+    calcularIva(){
         
         this.precioIva = (this.iva/100) * this.precioBase;
+        this.precioIva=parseFloat(this.precioIva.toFixed(2));
         this.precioTotal=this.precioBase + this.precioIva;
+        this.precioTotal=parseFloat(this.precioTotal.toFixed(2));
         
     }
     /**
@@ -82,9 +88,6 @@ class Factura{
         this.divEmpresa.innerHTML = this.empresa;
 
         this.divEmpresa.style.textAlign="right";
-
-        document.body.append(this.divCliente)
-        document.body.append(this.divEmpresa)
     }
 
     /**
@@ -110,7 +113,6 @@ class Factura{
                 this.seccionProductos.innerHTML +=  "<div>"+productos[i][j]+"</div>"              
             }
         }
-        document.body.append(this.seccionProductos)
     }
 
     /**
@@ -126,8 +128,6 @@ class Factura{
         this.seccionPrecios. innerHTML += "<div><strong>Base imp.</strong></div>   <div>"+this.precioBase+"€</div>"
         this.seccionPrecios. innerHTML += "<div><strong>IVA "+this.iva+"%</strong></div>  <div>"+this.precioIva+"€</div>"
         this.seccionPrecios. innerHTML += "<div><strong>TOTAL</strong></div>  <div>"+this.precioTotal+"€</div>";
-
-        document.body.append(this.seccionPrecios)
     }
 
     /**
@@ -137,7 +137,6 @@ class Factura{
         this.dispPago = document.createElement("h4");
 
         this.dispPago.innerHTML = "Forma de pago: " +this.formaPago;
-        document.body.appendChild(this.dispPago) 
     }
 
     /**
@@ -146,7 +145,7 @@ class Factura{
     displayEstado(){
         this.dispEstado =document.createElement("center");
         this.dispEstado.innerHTML = this.estado;
-        document.body.appendChild(this.dispEstado) 
+
     }
 
     /**
@@ -242,6 +241,9 @@ function main(){
         clienteEjemplo = new Cliente("Ferretería Paquiño", "Avda de Galicia", "986986986", "12345678A");
         empresaEjemplo = new Empresa("Mecanizados María José", "Estrada Vella de Madrid", "986547320", "99887744E");
         productoEj = new Array(new Producto("Pieza mecanizada",1, 640), new Producto("Piezas varias", 10, 15));
+        ejemplo.iva=21;
+        ejemplo.descuento=10
+        
         ejemplo.asignarFormaPago("Transferencia");
         ejemplo.asignarEstado("pagado");
         ejemploFacturas(ejemplo, clienteEjemplo, empresaEjemplo, productoEj);
@@ -252,6 +254,9 @@ function main(){
         clienteEjemplo = new Cliente("Gasolineras Lucho", "Avda de Alcalde Lavadores", "321654987", "3204789T");
         empresaEjemplo = new Empresa("Mesón Manolo", "Avenida de Martínez Garrido", "123456789", "99856214U");
         productoEj = new Array(new Producto("Menú do día", 15, 15), new Producto("O especial de Manolo", 3, 25), new Producto("Gran reserva da Luisa", 6, 40));
+        ejemplo.iva=21;
+        ejemplo.descuento=7.5;
+        
         ejemplo.asignarFormaPago("Al contado");
         ejemplo.asignarEstado("pagado");
         ejemploFacturas(ejemplo, clienteEjemplo, empresaEjemplo, productoEj);
