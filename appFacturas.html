@@ -1,18 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tarea UD4</title>
 </head>
-<body>
 
+<body>
+    <h1>Tarea Unidad 4 - Estructuras definidas por el usuario.</h1>
+    <hr>
     <button id="Ej1">Ejemplo 1</button>
     <button id="Ej2">Ejemplo 2</button>
+    <button id="Ej3">Ejemplo 3</button>
 </body>
 
 <footer>
-    <script src="main.js"></script>
+    <script>
+        /**
+         * Clase Factura,
+         * asignación de los datos, construcción del formato y muestra en otra ventana
+         */
+        class Factura {
+            constructor(id, fecha) {
+                this.id = id;
+                this.fecha = fecha;
+                this.precio = 0;
+                this.iva = 0
+                this.descuento = 0;
+                this.precioBase = 0;
+                this.precioIva = 0;
+                this.precioTotal = 0;
+            }
+
+            /**
+             * Precio total de todos los productos
+             * @param {number} precios 
+             */
+            calcularPrecio(precios) {
+                this.precio += precios
+            }
+            /**
+             * Calculo del descuento
+             * @param {number} descuento 
+             */
+            asignarDescuento() {
+                this.precioDescuento = this.descuento / 100 * this.precio;
+                this.precioBase = this.precio - this.precioDescuento;
+            }
+            /**
+             * Porcentaje de iva 
+             * @param {number} iva 
+             */
+            calcularIva() {
+
+                this.precioIva = (this.iva / 100) * this.precioBase;
+                this.precioTotal = this.precioBase + this.precioIva;
+
+            }
+            /**
+             * guardo los datos asociados al cliente para mostrarlos luego
+             * @param {Cliente} datosCliente 
+             */
+            asignarCliente(datosCliente) {
+                this.cliente = "";
+                for (const key in datosCliente) {
+                    if (typeof (datosCliente[key]) != "function") {
+                        this.cliente += datosCliente[key] + "<br>";
+                    }
+                }
+            }
+            /**
+             * guardo los datos asociados a la empresa para mostrarlos luego
+             * @param {Empresa} datosEmpresa 
+             */
+            asignarEmpresa(datosEmpresa) {
+                this.empresa = "";
+                for (const key in datosEmpresa) {
+                    if (typeof (datosEmpresa[key]) != "function") {
+                        this.empresa += datosEmpresa[key] + "<br>";
+                    }
+                }
+            }
+            /**
+             * transformo el modo a mayus y lo guardo en el objeto
+             * @param {string} estado 
+             */
+            asignarEstado(estado) {
+                this.estado = estado.toUpperCase();
+            }
+            /**
+             * registro el método de pago en el objeto
+             * @param {string} formaPago 
+             */
+            asignarFormaPago(formaPago) {
+                this.formaPago = formaPago;
+            }
+
+            /**
+             * encabezado de la factura, cliente y empresa emisora
+             */
+            encabezado() {
+                this.divCliente = document.createElement("div");
+                this.divEmpresa = document.createElement("div");
+
+                this.divCliente.innerHTML = this.cliente;
+                this.divEmpresa.innerHTML = this.empresa;
+
+                this.divEmpresa.style.textAlign = "right";
+            }
+
+            /**
+             * nombre de la factura, id + fecha
+             */
+            nombre() {
+                this.titulo = document.createElement("h3")
+                this.titulo.innerHTML = "Factura nº: " + this.id + " Fecha: " + this.fecha.toLocaleDateString();
+                document.body.append(this.titulo)
+            }
+
+            /**
+             * tabla de los productos que aparecerán en la factura
+             * @param {Array} productos 
+             */
+            tablaProductos(productos) {
+                this.seccionProductos = document.createElement("section");
+                this.seccionProductos.style.display = "grid";
+                this.seccionProductos.style.gridTemplateColumns = " 4fr repeat(3, 1fr)"
+                this.seccionProductos.innerHTML = "<div><strong>Descripción</strong></div>  <div><strong>Cantidad</strong></div>   <div><strong>Precio (€)</strong></div>   <div><strong>Parcial (€)</strong></div>"
+                for (const i in productos) {
+                    for (const j in productos[i]) {
+                        this.seccionProductos.innerHTML += "<div>" + productos[i][j] + "</div>"
+                    }
+                }
+            }
+
+            /**
+             * Tabla con los precios detallados
+             */
+            tablaPrecios() {
+                this.seccionPrecios = document.createElement("section");
+                this.seccionPrecios.style.display = "grid";
+                this.seccionPrecios.style.gridTemplateColumns = "300px 150px";
+                this.seccionPrecios.style.justifyContent = "end"
+                this.seccionPrecios.innerHTML = "<div><strong>Suma</strong></div>  <div>" + this.precio.toFixed(2) + "€</div>";
+                this.seccionPrecios.innerHTML += "<div><strong>Descuento " + this.descuento + "%</strong></div>   <div>" + this.precioDescuento.toFixed(2) + "€</div>";
+                this.seccionPrecios.innerHTML += "<div><strong>Base imp.</strong></div>   <div>" + this.precioBase.toFixed(2) + "€</div>"
+                this.seccionPrecios.innerHTML += "<div><strong>IVA " + this.iva + "%</strong></div>  <div>" + this.precioIva.toFixed(2) + "€</div>"
+                this.seccionPrecios.innerHTML += "<div><strong>TOTAL</strong></div>  <div>" + this.precioTotal.toFixed(2) + "€</div>";
+            }
+
+            /**
+             * muestro la forma de pago
+             */
+            displayFormaPago() {
+                this.dispPago = document.createElement("h4");
+
+                this.dispPago.innerHTML = "Forma de pago: " + this.formaPago;
+            }
+
+            /**
+             * mostrar estado de la factura
+             */
+            displayEstado() {
+                this.dispEstado = document.createElement("center");
+                this.dispEstado.innerHTML = this.estado;
+
+            }
+
+            /**
+             * abro una nueva ventana con todos los datos guardados
+             */
+            nuevaVentana() {
+                this.ventana = window.open("", "Factura nº " + this.id, "width = 800, height=800");
+                this.ventana.document.head.innerHTML = "";
+                this.ventana.document.body.innerHTML = "";
+                this.style = document.createElement("style");
+                this.style.innerHTML = "section div{ padding:5px; border:1px solid black }";
+
+                this.ventana.document.head.appendChild(this.style)
+                this.ventana.document.body.append(this.divCliente);
+                this.ventana.document.body.append(this.divEmpresa);
+                this.ventana.document.body.append(this.titulo);
+                this.ventana.document.body.append(this.seccionProductos);
+                this.ventana.document.body.append(this.seccionPrecios);
+                this.ventana.document.body.append(this.dispPago);
+                this.ventana.document.body.append(this.dispEstado);
+            }
+        }
+
+        /**
+         * Clase cliente,
+         * Atributos de los clientes
+         */
+        class Cliente {
+            constructor(nombre, dir, tlfno, nif) {
+                this.nombre = nombre;
+                this.dir = dir;
+                this.tlfno = tlfno;
+                this.nif = nif
+            }
+        }
+
+        /**
+         * Clase Empresa,
+         * hereda todas las propiedades de Cliente
+         */
+        class Empresa extends Cliente {
+            constructor(...sup) {
+                super(...sup)
+            }
+        }
+
+        /**
+         * Clase Producto,
+         * productos individuales con nombre, cantidad y precios individuales y totales
+         */
+        class Producto {
+            constructor(nombre, num, precio) {
+                this.nombre = nombre;
+                this.num = num;
+                this.precio = precio;
+            }
+            /**
+             * calculo del precio total de los productos del mismo tipo
+             */
+            precioTotal() {
+                this.total = this.num * this.precio;
+            }
+        }
+
+        /**
+         * Proceso los datos y creo la factura
+         * @param {Factura} ejFactura 
+         * @param {Cliente} ejCliente 
+         * @param {Empresa} ejEmpresa 
+         * @param {Array} ejProductos 
+         */
+        function ejemploFacturas(ejFactura, ejCliente, ejEmpresa, ejProductos) {
+            for (let i = 0; i < ejProductos.length; i++) {
+                ejProductos[i].precioTotal()
+                ejFactura.calcularPrecio(ejProductos[i].total)
+            }
+            //Establezco el cliente de la factura
+            ejFactura.asignarCliente(ejCliente);
+            //Establezco la empresa que empite la factura
+            ejFactura.asignarEmpresa(ejEmpresa);
+            //Descuento 
+            ejFactura.asignarDescuento();
+            //IVA asociado a la factura
+            ejFactura.calcularIva();
+            //construcción del formato de la factura 
+            ejFactura.encabezado();
+            ejFactura.nombre();
+            //Establezco las lineas de facturación cob cada producto
+            ejFactura.tablaProductos(ejProductos);
+            ejFactura.tablaPrecios();
+            ejFactura.displayFormaPago();
+            ejFactura.displayEstado();
+            //abro la factura en una ventana
+            ejFactura.nuevaVentana();
+        }
+
+
+        function main() {
+            var ejemplo
+            var clienteEjemplo
+            var empresaEjemplo
+            var productoEj
+
+            //EJEMPLO 1
+            document.getElementById("Ej1").addEventListener("click", evt => {
+                ejemplo = new Factura(4500, new Date("2021-03-14"));
+                clienteEjemplo = new Cliente("Ferretería Paquiño", "Avda de Galicia", "986986986", "12345678A");
+                empresaEjemplo = new Empresa("Mecanizados María José", "Estrada Vella de Madrid", "986547320", "99887744E");
+                productoEj = new Array(new Producto("Pieza mecanizada", 1, 640), new Producto("Piezas varias", 10, 15));
+                ejemplo.iva = 21;
+                ejemplo.descuento = 10
+
+                //asigno la forma de pago
+                ejemplo.asignarFormaPago("Transferencia");
+                //Estado de la factura
+                ejemplo.asignarEstado("pendiente");
+                ejemploFacturas(ejemplo, clienteEjemplo, empresaEjemplo, productoEj);
+            })
+
+            //EJEMPLO 2
+            document.getElementById("Ej2").addEventListener("click", evt => {
+                ejemplo = new Factura(2597, new Date("2016-9-4"));
+                clienteEjemplo = new Cliente("Gasolineras Lucho", "Avda de Alcalde Lavadores", "321654987", "3204789T");
+                empresaEjemplo = new Empresa("Mesón Manolo", "Avenida de Martínez Garrido", "123456789", "99856214U");
+                productoEj = new Array(new Producto("Menú do día", 15, 15), new Producto("O especial de Manolo", 3, 25), new Producto("Gran reserva da Luisa", 6, 40));
+                ejemplo.iva = 21;
+                ejemplo.descuento = 7.5;
+
+
+                ejemplo.asignarFormaPago("Al contado");
+                ejemplo.asignarEstado("pagado");
+                ejemploFacturas(ejemplo, clienteEjemplo, empresaEjemplo, productoEj);
+            })
+
+            //EJEMPLO 3
+            document.getElementById("Ej3").addEventListener("click", evt => {
+                ejemplo = new Factura(9919, new Date("1999-1-9"));
+                clienteEjemplo = new Cliente("Astilleros Sito", "Avda de Beiramar", "665874123", "9809598P");
+                empresaEjemplo = new Empresa("Importaciones Pablo Emilio", "Rúa dos Chans", "32165498", "0021789M");
+                productoEj = new Array(new Producto("Azucar glass (kg)", 20, 70), new Producto("Harina de trigo (kg)", 10, 250));
+                ejemplo.iva = 10;
+                ejemplo.descuento = 10;
+
+
+                ejemplo.asignarFormaPago("Al contado");
+                ejemplo.asignarEstado("pagado");
+                ejemploFacturas(ejemplo, clienteEjemplo, empresaEjemplo, productoEj);
+            })
+
+
+        }
+
+        main()
+    </script>
 </footer>
+
 </html>
